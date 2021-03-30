@@ -128,7 +128,7 @@ For an advanced comparison you can also enable/disable the pring of the info lin
 Here are numbers from running wrk locally on a 2015 Macbook Pro for 10 seconds with 2 threads and 10 connections:
 
 ### WITH LOG NO CACHE
-➜  ~ wrk http://localhost:4000/0ea9a5
+```➜  ~ wrk http://localhost:4000/0ea9a5
 Running 10s test @ http://localhost:4000/0ea9a5
   2 threads and 10 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
@@ -137,6 +137,7 @@ Running 10s test @ http://localhost:4000/0ea9a5
   8456 requests in 10.02s, 1.76MB read
 Requests/sec:    843.83
 Transfer/sec:    179.64KB
+```
 
 ### WITH LOG WITH CACHE
 ```➜  ~ wrk http://localhost:4000/0ea9a5
