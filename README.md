@@ -23,13 +23,19 @@ In the end, we will run a performance benchmark before and after the addition.
 
 # Setup The Environment
 
-For the purpose of running this demo you will need the Aerospike Enterprise Docker image for CacheDB running, with the port mapping 3000-3003:3000-3003:
+For the purpose of running this demo you will need the Aerospike Enterprise Docker image for CacheDB running, with the port mapping 3000-3003:3000-3003.
 
 `$ docker run -tid --name aero-ee -p 3000-3003:3000-3003 aerospike-cachedb:latest`
 
-And a Docker image of Postgres with the port mapping 5432:5432:
+And a Docker image of Postgres with the port mapping 5432:5432.
 
 `$ docker run --name postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres`
+
+Build the executable and run it:
+
+`$ go build main.go && ./cachedb`
+
+And open `localhost:4000` in your browser to see the shortener in action.
 
 # Adding The Cache To The Go Application:
 
@@ -103,11 +109,25 @@ func (a *Aerospike) Add(hash string, val string) {
 	a.client.PutBins(wp, key, bin)
 }
 ```
+Rebuild the executable and run it again:
+
+`$ go build main.go && ./cachedb`
+
+Note that as long as the Docker image is running, the cached values remain in the SQL storage, even when the app is rebuilt.
 
 
-# Benchmarks Using [wrk](https://github.com/wg/wrk) on a local environment (MacBook Pro 2015)
+# Benchmarking
 
-# WITH LOG NO CACHE
+We are using the benchmarking tool [wrk](https://github.com/wg/wrk).
+
+To compare the performance with and without CacheDB change the value of the boolean flag `CacheOn` for the cache, located in `func NewApp() *App ` in `main.go`.
+
+For an advanced comparison you can also enable/disable the pring of the info line announcing whether a redirection is happening from Aerospike or not (in this case, from the SQL storage). You can do so by commenting out (in Go the syntax is `//`) the relevant print command in `func (a *App) redirectHandler(w http.ResponseWriter, r *http.Request)` which is located in `handlers.go`.
+
+
+Here are numbers from running wrk locally on a 2015 Macbook Pro for 10 seconds with 2 threads and 10 connections:
+
+### WITH LOG NO CACHE
 ➜  ~ wrk http://localhost:4000/0ea9a5
 Running 10s test @ http://localhost:4000/0ea9a5
   2 threads and 10 connections
@@ -118,8 +138,8 @@ Running 10s test @ http://localhost:4000/0ea9a5
 Requests/sec:    843.83
 Transfer/sec:    179.64KB
 
-## WITH LOG WITH CACHE
-➜  ~ wrk http://localhost:4000/0ea9a5
+### WITH LOG WITH CACHE
+```➜  ~ wrk http://localhost:4000/0ea9a5
 Running 10s test @ http://localhost:4000/0ea9a5
   2 threads and 10 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
@@ -128,11 +148,12 @@ Running 10s test @ http://localhost:4000/0ea9a5
   27400 requests in 10.06s, 5.70MB read
 Requests/sec:   2722.67
 Transfer/sec:    579.63KB
+```
 
 Improvement in Requests/sec: x3.2
 
-## NO LOG NO CACHE
-➜  ~ wrk http://localhost:4000/0ea9a5
+### NO LOG NO CACHE
+```➜  ~ wrk http://localhost:4000/0ea9a5
 Running 10s test @ http://localhost:4000/0ea9a5
   2 threads and 10 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
@@ -141,9 +162,10 @@ Running 10s test @ http://localhost:4000/0ea9a5
   11940 requests in 10.01s, 2.48MB read
 Requests/sec:   1193.29
 Transfer/sec:    254.04KB
+```
 
-##  NO LOG WITH CACHE
-➜  ~ wrk http://localhost:4000/0ea9a5
+###  NO LOG WITH CACHE
+```➜  ~ wrk http://localhost:4000/0ea9a5
 Running 10s test @ http://localhost:4000/0ea9a5
   2 threads and 10 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
@@ -152,5 +174,5 @@ Running 10s test @ http://localhost:4000/0ea9a5
   36150 requests in 10.03s, 7.52MB read
 Requests/sec:   3605.73
 Transfer/sec:    767.63KB
-
+```
 Improvement in Requests/sec: x3
