@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <body>
+    <h2>url shortener</h2>
+    <form id="urlform" action="/add" method="POST">
+      <input name="url" type="text" />
+      <input type="submit" value="url" />
+    </form>
+    <p>
+      <a id="url" href=""></a>
+    </p>
+  </body>
+  <script>
+    var urlform = document.getElementById("urlform");
+    var url = document.getElementById("url");
+    urlform.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var form = e.target;
+      var data = new FormData(form);
+      var req = new XMLHttpRequest();
+
+      req.onreadystatechange = function () {
+        if (req.readyState == 4) {
+          if (req.status >= 200 && req.status <= 206) {
+            var data = JSON.parse(req.responseText);
+            var link =
+              window.location.protocol +
+              "//" +
+              window.location.host +
+              "/" +
+              data.hash;
+            url.setAttribute("href", link);
+            url.innerText = link;
+          } else {
+            alert("error: " + req.responseText);
+          }
+        }
+      };
+      req.open(form.method, form.action);
+      req.send(data);
+    });
+  </script>
+</html>
