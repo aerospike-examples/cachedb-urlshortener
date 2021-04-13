@@ -27,15 +27,19 @@ For the purpose of running this demo you will need the Docker image of this demo
 
 `$ docker run -d --name aerospike-cache-db -p 3000-3003:3000-3003 aerospike/aerospike-cache-db-demo:v5.4.0.6`
 
-And a Docker image of Postgres with the port mapping 5432:5432.
+And a Docker image of Postgres with the port mapping 5432:5432:
 
 `$ docker run --name postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres`
 
-Build the executable and run it:
+Next, build a Postgres database named `shorturl`:
+
+`$ docker exec -u postgres -ti postgres bash -c '/usr/bin/createdb shorturl'`
+
+As a last step, build the Go executable and run it:
 
 `$ go build main.go && ./cachedb`
 
-And open `localhost:4000` in your browser to see the shortener in action.
+Now you can open `localhost:4000` in your browser to see the shortener in action!
 
 # Adding The Cache To The Go Application:
 
