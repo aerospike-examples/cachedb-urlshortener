@@ -23,9 +23,9 @@ In the end, we will run a performance benchmark before and after the addition.
 
 # Setup The Environment
 
-For the purpose of running this demo you will need the Aerospike Enterprise Docker image for CacheDB running, with the port mapping 3000-3003:3000-3003.
+For the purpose of running this demo you will need the Docker image of this demo with the port mapping 3000-3003:3000-3003, ideally running detached in the background:
 
-`$ docker run -tid --name aero-ee -p 3000-3003:3000-3003 aerospike-cachedb:latest`
+`$ docker run -d --name aerospike-cache-db -p 3000-3003:3000-3003 aerospike/aerospike-cache-db-demo:v5.4.0.6`
 
 And a Docker image of Postgres with the port mapping 5432:5432.
 
