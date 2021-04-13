@@ -19,7 +19,7 @@ func NewApp() *App {
 	var a = &App{
 		Storage: NewStorage("postgres", "host=localhost port=5432 user=postgres password=password dbname=shorturl sslmode=disable"),
 		Aero:    NewAerospike("localhost", 3000, "test"),
-		CacheOn: true,
+		CacheOn: false,
 	}
 	a.Router = NewRouter(a)
 	return a

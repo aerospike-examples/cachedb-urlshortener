@@ -37,7 +37,7 @@ Next, build a Postgres database named `shorturl`:
 
 As a last step, build the Go executable and run it:
 
-`$ go build main.go && ./cachedb`
+`$ go build && ./cachedb`
 
 Now you can open `localhost:4000` in your browser to see the shortener in action!
 
